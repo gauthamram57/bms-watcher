@@ -1,191 +1,88 @@
-# BookMyShow Watcher
+# BookMyShow Ticket Watcher (bms-watcher)
 
-A lightweight, configurable BookMyShow booking watcher built with Python and Playwright. Monitor any BookMyShow booking page and receive an instant Telegram notification when bookings become available.
+An automated monitoring tool built with Python, Playwright, and Telegram Bot API to watch ticket availability on BookMyShow for upcoming movies and venues, sending real-time notifications when bookings open.
 
-## Features
+## 🚀 Features
 
-- Monitor any BookMyShow booking page
-- Uses Playwright to handle Cloudflare-protected pages
-- Sends instant Telegram notifications
-- Runs automatically every 5 minutes using GitHub Actions
-- Lightweight and easy to configure
-- Works for any city, cinema, or event available on BookMyShow
+- **Automated Monitoring**: Periodically checks show listings for specified movies, venue codes, and region codes.
+- **Playwright Support**: Handles dynamic pages and Cloudflare checks reliably using Playwright headless browser.
+- **Telegram Alerts**: Sends instant alerts to your Telegram chat as soon as ticket bookings open.
+- **GitHub Actions Integration**: Supports automated scheduled checks via GitHub Actions workflows without requiring a VPS.
+- **Environment Configuration**: Configurable via `.env` file or environment variables.
 
----
-
-## How It Works
-
-The watcher periodically opens a BookMyShow booking page using a Chromium browser.
-
-When the page becomes available (or matches your configured condition), it sends a Telegram notification.
-
-This approach monitors the same booking page that users access in their browsers instead of relying on undocumented APIs.
-
----
-
-## Tech Stack
-
-- Python 3
-- Playwright
-- Requests
-- GitHub Actions
-- Telegram Bot API
-
----
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 bms-watcher/
 ├── .github/
 │   └── workflows/
 │       └── watcher.yml
-├── main.py
-├── watcher.py
-├── notifier.py
-├── config.py
-├── requirements.txt
-├── .env.example
-└── README.md
+├── src/
+│   ├── api.py           # BookMyShow API client
+│   ├── config.py        # Environment & configuration loader
+│   ├── logger.py        # Logging utility
+│   ├── notifier.py      # Telegram notification service
+│   ├── state.py         # State tracking (prevents duplicate alerts)
+│   ├── utils.py         # Helper utilities
+│   └── watcher.py       # Core ticket monitoring engine
+├── .env.example         # Environment template
+├── main.py              # Entry point script
+├── requirements.txt     # Python dependencies
+├── LICENSE              # Open source license
+└── README.md            # Documentation
 ```
 
----
+## 🛠️ Quick Start
 
-## Installation
-
-Clone the repository:
+### 1. Clone & Setup Environment
 
 ```bash
-git clone https://github.com/<your-username>/bms-watcher.git
+git clone https://github.com/gauthamram57/bms-watcher.git
 cd bms-watcher
-```
-
-Create a virtual environment:
-
-```bash
-python -m venv venv
-```
-
-Activate it:
-
-**Linux/macOS**
-
-```bash
+python3 -m venv venv
 source venv/bin/activate
-```
-
-**Windows**
-
-```powershell
-venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
 playwright install chromium
 ```
 
-Run the watcher:
+### 2. Configure Environment Variables
+
+Copy `.env.example` to `.env` and fill in your details:
 
 ```bash
-python main.py
+cp .env.example .env
 ```
 
----
-
-## Configuration
-
-Configure the watcher by editing `config.py` or using environment variables.
-
-Example:
-
-```python
-BOOKING_URL = "https://in.bookmyshow.com/cinemas/..."
-CHECK_INTERVAL = 300
+Edit `.env`:
+```env
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_chat_id_here
+MOVIE_NAME=Spider-Man: Brand New Day
+VENUE_CODE=PBMC
+REGION_CODE=COIM
+DATE_CODE=20260729
+CHECK_INTERVAL=300
 ```
 
----
+### 3. Run the Watcher
 
-## Telegram Setup
-
-1. Create a bot using `@BotFather`.
-2. Copy the bot token.
-3. Obtain your Telegram Chat ID.
-4. Add them as environment variables or GitHub Secrets.
-
-Required values:
-
-```
-BOT_TOKEN
-CHAT_ID
+```bash
+python3 main.py
 ```
 
----
+## 🤖 GitHub Actions Workflow
 
-## GitHub Actions
+The project includes a GitHub Actions workflow in `.github/workflows/` that can automatically run the watcher on a schedule.
 
-The project includes a GitHub Actions workflow that checks the configured booking page every five minutes.
+To set it up:
+1. Go to repository **Settings > Secrets and variables > Actions**.
+2. Add secrets for `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`.
+3. Enable GitHub Actions in the repository tab.
 
-Setup:
+## 📜 License
 
-1. Fork or clone the repository.
-2. Add the required GitHub Secrets.
-3. Enable GitHub Actions.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-No server or VPS is required.
-
----
-
-## Use Cases
-
-- Movie ticket releases
-- Early booking notifications
-- Special screenings
-- Limited-release events
-- Popular shows
-- Any publicly accessible BookMyShow booking page
-
----
-
-## Example Notification
-
-```
-Booking Alert
-
-The monitored BookMyShow page is now available.
-
-https://in.bookmyshow.com/...
-```
-
----
-
-## Roadmap
-
-- Multiple booking page support
-- Discord notifications
-- Email notifications
-- Slack integration
-- Multiple cinema monitoring
-- Docker support
-- YAML configuration
-- Retry handling and health logging
-
----
-
-## Contributing
-
-Contributions are welcome. Feel free to open an issue or submit a pull request.
-
----
-
-## License
-
-This project is licensed under the MIT License.
-
----
-
-## Disclaimer
+## ⚠️ Disclaimer
 
 This project is intended for personal automation and educational purposes. It automates checking publicly accessible BookMyShow pages using a browser and sends notifications based on user-defined conditions. It is not affiliated with or endorsed by BookMyShow.
